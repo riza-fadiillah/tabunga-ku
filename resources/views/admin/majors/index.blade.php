@@ -6,7 +6,7 @@
             </h2>
 
             <a href="{{ route('majors.create') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
-                Add New Majors
+                Tambah Jurusan
             </a>
             
             

@@ -10,18 +10,33 @@
             <h3 class="text-lg font-semibold mb-4">Details</h3>
 
             <div class="mb-2">
-                <strong>Class:</strong>
-                <p>{{ $saving->class->name ?? 'No Class Assigned' }}</p>
+                <strong>Teacher ID:</strong>
+                <p>{{ $saving->teacher_id }}</p>
             </div>
 
             <div class="mb-2">
-                <strong>Name:</strong>
-                <p>{{ $saving->name }}</p>
+                <strong>User ID:</strong>
+                <p>{{ $saving->user_id }}</p>
             </div>
 
             <div class="mb-2">
-                <strong>Role:</strong>
-                <p>{{ $saving->role }}</p>
+                <strong>Date:</strong>
+                <p>{{ date('Y-m-d', strtotime($saving->date)) }}</p>
+            </div>
+
+            <div class="mb-2">
+                <strong>Deebit:</strong>
+                <p>{{ number_format($saving->deebit, 2) }}</p>
+            </div>
+
+            <div class="mb-2">
+                <strong>Kredit:</strong>
+                <p>{{ number_format($saving->kredit, 2) }}</p>
+            </div>
+
+            <div class="mb-2">
+                <strong>Note:</strong>
+                <p>{{ $saving->note ?? 'No Notes Provided' }}</p>
             </div>
 
             <div class="mt-4">

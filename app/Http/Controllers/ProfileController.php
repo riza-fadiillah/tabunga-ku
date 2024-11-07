@@ -2,59 +2,85 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Hash;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Siswa;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Display the user's profile.
      */
-    public function edit(Request $request): View
+    public function show()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = Auth::user();
+        // dd($user->siswa);
+        $siswa = $user->siswa; 
+        if ($siswa) {
+            $siswa->load('savings');
+        }
+
+        return view('profile.show', compact('user', 'siswa'));
+    }
+
+    public function generatePdf($id)
+    {
+    
+        $siswa = Siswa::with('user', 'classes', 'major', 'savings')->findOrFail($id);
+        $pdf = PDF::loadView('profile.pdf', compact('siswa'));
+
+       
+        return $pdf->download('profil_siswa_' . $siswa->user->name . '.pdf');
+    }
+    /**
+     * Show the form for editing the profile.
+     */
+    public function edit()
+    {
+        $user = Auth::user();
+        return view('profile.edit', compact('user'));
     }
 
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
+        $user = Auth::user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+       
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+       
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
         }
 
-        $request->user()->save();
+        
+        $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return redirect()->route('profile.show')->with('success', 'Profile updated successfully.');
     }
 
     /**
-     * Delete the user's account.
+     * Remove the user's account from the system.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy()
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
+        $user = Auth::user();
         Auth::logout();
-
         $user->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return redirect('/')->with('success', 'Your account has been deleted.');
     }
 }

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="bg-blue-600 py-4 px-6 rounded-lg shadow-lg">
-            <h2 class="text-3xl font-semibold text-white">{{ __('Detail Kelas') }}</h2>
+        <div class=" py-4 px-6 ">
+            <h2 class="text-3xl text-black">{{ __('Detail Kelas') }}</h2>
         </div>
     </x-slot>
 
@@ -22,8 +22,8 @@
                     <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-md p-6">
                         <ul>
                             <li class="text-2xl font-bold text-gray-900">{{ $class->name }}</li>
-                            <li class="text-xl text-gray-700 mt-2"><strong>Major ID:</strong> {{ $class->major_id }}</li>
-                            <li class="text-xl text-gray-700 mt-2"><strong>User ID:</strong> {{ $class->user_id }}</li>
+                            <li class="text-xl text-gray-700 mt-2"><strong>Major :</strong> {{ $class->major->name }}</li>
+                            <li class="text-xl text-gray-700 mt-2"><strong>User :</strong> {{ $class->user->name }}</li>
                             <li class="text-xl text-gray-700 mt-2"><strong>Description:</strong> {{ $class->description }}</li>
                         </ul>
                     </div>

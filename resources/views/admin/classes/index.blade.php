@@ -6,7 +6,7 @@
             </h2>
 
             <a href="{{ route('classes.create') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
-                Add New Class
+                Tambah Kelas
             </a>
         </div>
     </x-slot>
@@ -21,8 +21,8 @@
                 <thead class="bg-blue-700 border-b border-gray-200">
                     <tr>
                         <th class="py-3 px-4 text-center text-white">No</th>
-                        <th class="py-3 px-4 text-center text-white">Major ID</th>
-                        <th class="py-3 px-4 text-center text-white">User ID</th>
+                        <th class="py-3 px-4 text-center text-white">Major </th>
+                        <th class="py-3 px-4 text-center text-white">Wali kelas </th>
                         <th class="py-3 px-4 text-center text-white">Name</th>
                         <th class="py-3 px-4 text-center text-white">Description</th>
                         <th class="py-3 px-4 text-center text-white">Actions</th>
@@ -32,8 +32,8 @@
                     @forelse ($classes as $class)
                         <tr class="border-b border-gray-200 hover:bg-gray-50 text-center">
                             <td class="py-2 px-4 text-gray-700">{{ $loop->iteration }}</td>
-                            <td class="py-2 px-4 text-gray-700">{{ $class->major_id }}</td>
-                            <td class="py-2 px-4 text-gray-700">{{ $class->user_id }}</td>
+                            <td class="py-2 px-4 text-gray-700">{{ $class->major->name }}</td>
+                            <td class="py-2 px-4 text-gray-700">{{ !is_null($class->user) ? $class->user->name : '-' }}</td>
                             <td class="py-2 px-4 text-gray-700">{{ $class->name }}</td>
                             <td class="py-2 px-4 text-gray-700">{{ $class->description }}</td>
                             <td class="py-2 px-4 text-center">

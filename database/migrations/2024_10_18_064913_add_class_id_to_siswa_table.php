@@ -11,22 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('siswa', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama');
-            $table->unsignedBigInteger('class_id'); 
-            $table->unsignedBigInteger('major_id'); 
-            $table->timestamps();
+       Schema::table('siswa', function (Blueprint $table) {
+            $table->unsignedBigInteger('class_id')->after('nama');
+            $table->unsignedBigInteger('major_id')->after('class_id');
 
             $table->foreign('class_id')->references('id')->on('classes')->onDelete('cascade');
             $table->foreign('major_id')->references('id')->on('majors')->onDelete('cascade');
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('siswa');
+        Schema::table('siswa', function (Blueprint $table) {
+            $table->dropForeign(['class_id']);
+            $table->dropForeign(['major_id']);
+            $table->dropColumn(['class_id', 'major_id']);
+        });
     }
 };

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Classes; // Impor model Classes
+use App\Models\Classes;
+use App\Models\Majors;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ClassesController extends Controller
@@ -12,7 +14,7 @@ class ClassesController extends Controller
      */
     public function index()
     {
-        $classes = Classes::all();
+        $classes = Classes::with('major','user')->get();
         return view('admin.classes.index', compact('classes'));
     }
 
@@ -21,7 +23,10 @@ class ClassesController extends Controller
      */
     public function create()
     {
-        return view('admin.classes.create');
+        $majors = Majors::get();
+        $users = User::get(); 
+      
+        return view('admin.classes.create', compact('majors', 'users'));
     }
 
     /**
@@ -30,14 +35,19 @@ class ClassesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'major_id' => 'required|integer',
-            'user_id' => 'nullable|integer',
+            'major_id' => 'required|integer|exists:majors,id',
+            'user_id' => 'nullable|integer|exists:users,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
-        // Menyimpan data kelas ke dalam database
-        Classes::create($request->all());
+        // Menyimpan data
+        Classes::create([
+            'major_id' => $request->input('major_id'),
+            'user_id' => $request->input('user_id'),
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+        ]);
 
         return redirect()->route('classes.index')->with('success', 'Kelas berhasil ditambahkan');
     }
@@ -45,9 +55,9 @@ class ClassesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Classes $classes, $id)
+    public function show($id)
     {
-        $class = Classes::findOrFail($id); // Ambil data kelas berdasarkan ID
+        $class = Classes::findOrFail($id);
         return view('admin.classes.show', compact('class'));
     }
 
@@ -56,8 +66,10 @@ class ClassesController extends Controller
      */
     public function edit($id)
     {
+        $majors = Majors::get();
+        $users = User::get(); 
         $classes = Classes::findOrFail($id);
-        return view('admin.classes.edit', compact('classes'));
+        return view('admin.classes.edit', compact('classes', 'majors', 'users'));
     }
 
     /**
@@ -66,11 +78,12 @@ class ClassesController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'major_id' => 'required|integer',
-            'user_id' => 'nullable|integer',
+            'major_id' => 'required|integer|exists:majors,id',
+            'user_id' => 'nullable|integer|exists:users,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
+          
 
         $classes = Classes::findOrFail($id);
         $classes->update($request->all());
